@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     etu_id      VARCHAR(100) NOT NULL UNIQUE,
     username    VARCHAR(100) NOT NULL UNIQUE,
     email       VARCHAR(255) NOT NULL UNIQUE,
+    token       VARCHAR(64) UNIQUE,
     created_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 

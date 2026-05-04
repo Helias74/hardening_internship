@@ -1,17 +1,18 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { DatabaseService } from './database/database.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+    constructor(private db: DatabaseService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
-
-  @Get('health')
-    getHealth(): string {
-      return 'Backend is alive !';
+    @Get()
+    getHello() {
+        return 'Backend is alive !';
+    }
+    
+    @Get('test-db')
+    async testDb() {
+        const result = await this.db.query('SELECT NOW()');
+        return { connected: true, time: result.rows[0].now };
     }
 }

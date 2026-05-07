@@ -15,7 +15,7 @@ const router = createRouter({
     { 
       path: '/teacher', 
       component: TeacherView,
-      meta: { requiresAuth: true }   // ← cette route est protégée
+      meta: { requiresAuth: true }
     }
   ]
 })

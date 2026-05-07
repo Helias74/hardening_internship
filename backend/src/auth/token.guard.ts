@@ -9,7 +9,6 @@ export class TokenGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
 
-        // Récupère le token depuis l'URL (?token=abc123)
         const token = request.query.token;
 
         if (!token) {
@@ -19,9 +18,9 @@ export class TokenGuard implements CanActivate {
         // Vérifie que le token existe en base
         const result = await this.db.query(
             `SELECT u.*, e.id as enrollment_id, e.container_ip
-             FROM users u
-             JOIN enrollments e ON e.user_id = u.id
-             WHERE u.token = $1`,
+            FROM users u
+            LEFT JOIN enrollments e ON e.user_id = u.id
+            WHERE u.token = $1`,
             [token]
         );
 

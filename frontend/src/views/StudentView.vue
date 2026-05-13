@@ -33,7 +33,7 @@ const error   = ref('');
 async function verify() {
   error.value = '';
   try {
-    const res = await fetch(`http://localhost:3000/student/me?token=${token.value}`);
+    const res = await fetch(`/api/student/me?token=${token.value}`);
     if (!res.ok) {
       error.value = 'Token invalide';
       return;

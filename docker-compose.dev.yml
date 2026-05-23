@@ -26,7 +26,7 @@ services:
     depends_on:
       - postgres
     command: node seeds/seed.js
-    profiles: ["seed"]  # ne se lance pas avec un docker-compose up normal
+    profiles: ["seed"]
 
   backend:
     build:
@@ -35,12 +35,18 @@ services:
     volumes:
       - ./backend:/app    
       - /app/node_modules
+      - ./vulnerable/robot_key:/app/robot_key:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+
     environment:
       DB_HOST: postgres
       DB_PORT: ${DB_PORT}
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      SESSION_SECRET: ${SESSION_SECRET}
     ports:
       - "3000:3000"
     depends_on:
@@ -59,6 +65,13 @@ services:
     depends_on:
       - backend
     command: npm run dev -- --host
+
+  vulnerable:
+    build:
+      context: ./vulnerable
+    ports:
+      - "2223:22"
+    restart: unless-stopped
 
 volumes:
   postgres_data:

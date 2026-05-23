@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS enrollments (
     id              SERIAL PRIMARY KEY,
     session_id      INTEGER NOT NULL REFERENCES sessions(id),
     user_id         INTEGER NOT NULL REFERENCES users(id),
-    container_ip    VARCHAR(45) NOT NULL,
+    container_ip    VARCHAR(45),
     enrolled_at     TIMESTAMP NOT NULL DEFAULT NOW(),
     UNIQUE(session_id, user_id)   -- un étudiant = un seul conteneur par session
 );

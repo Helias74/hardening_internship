@@ -59,4 +59,18 @@ export class ContainersService {
     await container.stop();
     await container.remove();
   }
+
+  async stopContainerByIp(ip: string): Promise<void> {
+    const containers = await this.docker.listContainers();
+
+    const target = containers.find(c =>
+      c.NetworkSettings?.Networks?.['bridge']?.IPAddress === ip
+    );
+
+    if (target) {
+      const container = this.docker.getContainer(target.Id);
+      await container.stop();
+      await container.remove();
+    }
+  }
 }

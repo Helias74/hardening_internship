@@ -24,6 +24,7 @@
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
+    "csv-parse": "^6.2.1",
     "dockerode": "^5.0.0",
     "express-session": "^1.19.0",
     "pg": "^8.20.0",

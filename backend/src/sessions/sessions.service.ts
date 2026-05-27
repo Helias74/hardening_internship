@@ -65,7 +65,7 @@ export class SessionsService {
       if (enrollment.container_ip) {
         try {
           await this.containersService.stopContainerByIp(enrollment.container_ip);
-        } catch (e: unknown) {
+        } catch (e) {
           console.error(`Erreur suppression conteneur ${enrollment.container_ip}:`, e.message);
         }
       }
@@ -99,23 +99,22 @@ export class SessionsService {
       const userRes = await this.db.query(
         `INSERT INTO users (etu_id, username, email, token)
          VALUES ($1, $2, $3, $4)
-         ON CONFLICT (etu_id) DO NOTHING
+         ON CONFLICT (etu_id) DO UPDATE SET etu_id = EXCLUDED.etu_id
          RETURNING id, etu_id, username, token`,
         [record.etu_id, username, record.email, token]
       );
 
-      if (userRes.rows.length > 0) {
-        const user = userRes.rows[0];
+      const userId = userRes.rows[0].id;
+      const user = userRes.rows[0];
 
-        await this.db.query(
-          `INSERT INTO enrollments (session_id, user_id)
-           VALUES ($1, $2)
-           ON CONFLICT (session_id, user_id) DO NOTHING`,
-          [sessionId, user.id]
-        );
+      await this.db.query(
+        `INSERT INTO enrollments (session_id, user_id)
+         VALUES ($1, $2)
+         ON CONFLICT (session_id, user_id) DO NOTHING`,
+        [sessionId, userId]
+      );
 
-        results.push({ username: user.username, token: user.token });
-      }
+      results.push({ username: user.username, token: user.token });
     }
 
     return results;

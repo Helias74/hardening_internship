@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import StudentView from '../views/StudentView.vue'
 import TeacherView from '../views/TeacherView.vue'
 import LoginView from '../views/LoginView.vue'
+import SessionsView from '../views/SessionsView.vue'
 import { verify } from '../services/auth.service.js'
 
 
@@ -15,7 +16,10 @@ const router = createRouter({
     { 
       path: '/teacher', 
       component: TeacherView,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
+      children: [
+        { path: 'sessions', component: SessionsView }
+      ]
     }
   ]
 })

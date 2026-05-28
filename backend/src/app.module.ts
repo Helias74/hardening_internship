@@ -6,6 +6,7 @@ import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
 import { ContainersModule } from './containers/containers.module';
 import { SessionsModule } from './sessions/sessions.module';
+import { RobotModule } from './robot/robot.module';
 
 
 @Module({
@@ -18,6 +19,7 @@ import { SessionsModule } from './sessions/sessions.module';
     AuthModule,
     ContainersModule,
     SessionsModule,
+    RobotModule,
   ],
   controllers: [AppController],
   providers: [AppService],

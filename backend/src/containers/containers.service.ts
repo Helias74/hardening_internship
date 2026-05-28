@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import Docker from 'dockerode';
 import { DatabaseService } from '../database/database.service';
 
+const NETWORK = 'hardening_internship_hardening_network';
+
 @Injectable()
 export class ContainersService {
   private docker: Docker;
@@ -17,14 +19,15 @@ export class ContainersService {
       HostConfig: {
         PortBindings: {
           '22/tcp': [{ HostPort: '0' }]
-        }
+        },
+        NetworkMode: NETWORK,
       }
     });
 
     await container.start();
 
     const info = await container.inspect();
-    const ip = info.NetworkSettings.Networks['bridge']?.IPAddress ?? '';
+    const ip = info.NetworkSettings.Networks[NETWORK]?.IPAddress ?? '';
 
     return ip;
   }
@@ -36,15 +39,15 @@ export class ContainersService {
       HostConfig: {
         PortBindings: {
           '22/tcp': [{ HostPort: '0' }]
-        }
+        },
+        NetworkMode: NETWORK,
       }
     });
 
     await container.start();
 
     const info = await container.inspect();
-    const port = info.NetworkSettings.Ports['22/tcp'][0].HostPort;
-    const ip = info.NetworkSettings.Networks['bridge']?.IPAddress ?? '';
+    const ip = info.NetworkSettings.Networks[NETWORK]?.IPAddress ?? '';
 
     await this.db.query(
       `UPDATE enrollments SET container_ip = $1 WHERE id = $2`,
@@ -64,7 +67,7 @@ export class ContainersService {
     const containers = await this.docker.listContainers();
 
     const target = containers.find(c =>
-      c.NetworkSettings?.Networks?.['bridge']?.IPAddress === ip
+      c.NetworkSettings?.Networks?.[NETWORK]?.IPAddress === ip
     );
 
     if (target) {

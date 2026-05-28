@@ -1,9 +1,5 @@
-// database/seeds/seed.js
-// Usage : node seed.js
-
 require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
 const { Pool } = require('pg');
-const crypto   = require('crypto');
 
 const pool = new Pool({
     host:     process.env.DB_HOST,
@@ -13,38 +9,25 @@ const pool = new Pool({
     password: process.env.DB_PASSWORD,
 });
 
-const STUDENTS = [
-    { etu_id: 'p2109922', username: 'cbouillot', email: 'clement.bouillot@etu.univ-lyon1.fr' },
-    { etu_id: 'p2100001', username: 'amartin',   email: 'alice.martin@etu.univ-lyon1.fr'     },
-    { etu_id: 'p2100002', username: 'bdupont',   email: 'bob.dupont@etu.univ-lyon1.fr'       },
-];
-
 async function seed() {
     const client = await pool.connect();
 
     try {
-        console.log('Seeding users...\n');
+        console.log('Seeding vulnerabilities...\n');
 
-        for (const s of STUDENTS) {
-            const token = crypto.randomBytes(32).toString('hex');
+        await client.query(`
+            INSERT INTO vulnerabilities (name, category, check_fn, max_score, description)
+            VALUES ($1, $2, $3, $4, $5)
+            ON CONFLICT (name) DO NOTHING
+        `, [
+            'ssh_default_password',
+            'authentication',
+            'check_ssh_password',
+            100,
+            'Le mot de passe par défaut "student" du compte étudiant doit être changé.'
+        ]);
 
-            const res = await client.query(
-                `INSERT INTO users (etu_id, username, email, token)
-                 VALUES ($1, $2, $3, $4)
-                 ON CONFLICT (etu_id) DO NOTHING
-                 RETURNING id, etu_id, username, token`,
-                [s.etu_id, s.username, s.email, token]
-            );
-
-            if (res.rows.length > 0) {
-                const row = res.rows[0];
-                console.log(`${row.username} (${row.etu_id})`);
-                console.log(`   token: ${row.token}\n`);
-            } else {
-                console.log(`${s.username} déjà présent, ignoré\n`);
-            }
-        }
-
+        console.log('Vulnérabilité "ssh_default_password" insérée.\n');
         console.log('Done.');
     } finally {
         client.release();

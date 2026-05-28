@@ -12,7 +12,7 @@ export class SessionsService {
 
   async create(name: string) {
     const res = await this.db.query(
-      `INSERT INTO sessions (name) VALUES ($1) RETURNING *`,
+      `INSERT INTO sessions (name, active) VALUES ($1, false) RETURNING *`,
       [name]
     );
     return res.rows[0];

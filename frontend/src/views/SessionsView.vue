@@ -77,7 +77,7 @@ async function handleDelete(id) {
 
 function openImport(id) {
   importSessionId.value = id
-  csvContent.value = ''
+  csvContent.value = 'etu_id,email\n'
 }
 
 async function handleImport() {

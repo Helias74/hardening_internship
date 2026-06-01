@@ -7,7 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { ContainersModule } from './containers/containers.module';
 import { SessionsModule } from './sessions/sessions.module';
 import { RobotModule } from './robot/robot.module';
-
+import { ScoringModule } from './scoring/scoring.module';
 
 @Module({
   imports: [
@@ -20,6 +20,7 @@ import { RobotModule } from './robot/robot.module';
     ContainersModule,
     SessionsModule,
     RobotModule,
+    ScoringModule,
   ],
   controllers: [AppController],
   providers: [AppService],

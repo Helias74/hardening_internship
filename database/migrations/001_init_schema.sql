@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS vulnerabilities (
     category    VARCHAR(50)  NOT NULL,
     check_fn    VARCHAR(100) NOT NULL,
     max_score   INTEGER      NOT NULL DEFAULT 1,
+    coefficient NUMERIC(4,2) NOT NULL DEFAULT 1.0,
     description TEXT
 );
 

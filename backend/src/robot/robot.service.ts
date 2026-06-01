@@ -30,7 +30,7 @@ export class RobotService implements OnApplicationBootstrap {
     `);
 
     const { rows: vulnerabilities } = await this.db.query(`
-      SELECT id, check_fn FROM vulnerabilities
+      SELECT id, check_fn, max_score, coefficient FROM vulnerabilities
     `);
 
     if (enrollments.length === 0) return;
@@ -59,6 +59,40 @@ export class RobotService implements OnApplicationBootstrap {
 
         this.logger.debug(`enrollment=${enrollment.id} | ${vuln.check_fn} | ${passed ? '✓' : '✗'}`);
       }
+
+      await this.computeAndSaveScore(enrollment.id, vulnerabilities);
     }
+  }
+
+  private async computeAndSaveScore(
+    enrollmentId: number,
+    vulnerabilities: { id: number; max_score: number; coefficient: number }[],
+  ): Promise<void> {
+    const { rows: results } = await this.db.query(`
+      SELECT vuln_id, passed FROM attack_results
+      WHERE enrollment_id = $1
+    `, [enrollmentId]);
+
+    const passedSet = new Set(
+      results.filter(r => r.passed).map(r => r.vuln_id),
+    );
+
+    let score = 0;
+    let maxScore = 0;
+
+    for (const vuln of vulnerabilities) {
+      const points = vuln.max_score * vuln.coefficient;
+      maxScore += points;
+      if (passedSet.has(vuln.id)) {
+        score += points;
+      }
+    }
+
+    await this.db.query(`
+      INSERT INTO score_snapshots (enrollment_id, score, max_score, snapshot_at)
+      VALUES ($1, $2, $3, NOW())
+    `, [enrollmentId, Math.round(score), Math.round(maxScore)]);
+
+    this.logger.debug(`enrollment=${enrollmentId} | score=${Math.round(score)}/${Math.round(maxScore)}`);
   }
 }

@@ -16,14 +16,15 @@ async function seed() {
         console.log('Seeding vulnerabilities...\n');
 
         await client.query(`
-            INSERT INTO vulnerabilities (name, category, check_fn, max_score, description)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO vulnerabilities (name, category, check_fn, max_score, coefficient, description)
+            VALUES ($1, $2, $3, $4, $5, $6)
             ON CONFLICT (name) DO NOTHING
         `, [
             'ssh_default_password',
             'authentication',
             'check_ssh_password',
             100,
+            1.0,
             'Le mot de passe par défaut "student" du compte étudiant doit être changé.'
         ]);
 

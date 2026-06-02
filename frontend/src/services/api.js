@@ -41,3 +41,23 @@ export async function importStudents(id, csv) {
   })
   return response.json()
 }
+
+// Scoring
+export async function getStudentScore(token) {
+  const response = await fetch(`${BASE_URL}/scoring/student/me?token=${token}`)
+  return response.json()
+}
+
+export async function getStudentsList() {
+  const response = await fetch(`${BASE_URL}/scoring/admin/students`, {
+    credentials: 'include'
+  })
+  return response.json()
+}
+
+export async function getStudentDetail(enrollmentId) {
+  const response = await fetch(`${BASE_URL}/scoring/admin/students/${enrollmentId}`, {
+    credentials: 'include'
+  })
+  return response.json()
+}

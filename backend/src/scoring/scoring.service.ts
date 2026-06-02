@@ -43,6 +43,7 @@ export class ScoringService {
         u.username,
         u.email,
         u.etu_id,
+        u.token,
         e.id as enrollment_id,
         e.container_ip,
         ss.score,

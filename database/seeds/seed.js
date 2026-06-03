@@ -51,6 +51,42 @@ async function seed() {
             'Les ports et services inutilisés (comme rpcbind sur le port 111) doivent être fermés.'
         ]);
 
+        await client.query(`
+            INSERT INTO vulnerabilities (name, category, check_fn, max_score, coefficient, description)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            ON CONFLICT (name) DO UPDATE 
+            SET category = EXCLUDED.category,
+                check_fn = EXCLUDED.check_fn,
+                max_score = EXCLUDED.max_score,
+                coefficient = EXCLUDED.coefficient,
+                description = EXCLUDED.description
+        `, [
+            'suid_find',
+            'privilege_escalation',
+            'check_suid_find',
+            100,
+            3.0,
+            'Le bit SUID sur le binaire find (/usr/bin/find) doit être retiré pour éviter une élévation de privilèges.'
+        ]);
+
+        await client.query(`
+            INSERT INTO vulnerabilities (name, category, check_fn, max_score, coefficient, description)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            ON CONFLICT (name) DO UPDATE 
+            SET category = EXCLUDED.category,
+                check_fn = EXCLUDED.check_fn,
+                max_score = EXCLUDED.max_score,
+                coefficient = EXCLUDED.coefficient,
+                description = EXCLUDED.description
+        `, [
+            'redis_exposed',
+            'application',
+            'check_redis_exposed',
+            100,
+            3.0,
+            'Le service Redis doit être configuré avec un mot de passe (requirepass) ou restreint aux connexions locales.'
+        ]);
+
         console.log('Vulnérabilités de la Semaine 2 insérées/mises à jour.\n');
         console.log('Done.');
     } finally {

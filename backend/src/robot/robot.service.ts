@@ -1,9 +1,11 @@
 import { Injectable, OnApplicationBootstrap, Logger } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { check_ssh_password } from './checks/check_ssh_password';
+import { check_unused_ports } from './checks/check_unused_ports';
 
 const CHECK_REGISTRY: Record<string, (ip: string) => Promise<boolean>> = {
   check_ssh_password,
+  check_unused_ports,
 };
 
 const ROBOT_INTERVAL_MS = 30_000;

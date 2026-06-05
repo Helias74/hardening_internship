@@ -87,6 +87,78 @@ async function seed() {
             'Le service Redis doit être configuré avec un mot de passe (requirepass) ou restreint aux connexions locales.'
         ]);
 
+        await client.query(`
+            INSERT INTO vulnerabilities (name, category, check_fn, max_score, coefficient, description)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            ON CONFLICT (name) DO UPDATE 
+            SET category = EXCLUDED.category,
+                check_fn = EXCLUDED.check_fn,
+                max_score = EXCLUDED.max_score,
+                coefficient = EXCLUDED.coefficient,
+                description = EXCLUDED.description
+        `, [
+            'docker_sock_exposed',
+            'privilege_escalation',
+            'check_docker_sock',
+            100,
+            2.0,
+            'Le fichier /var/run/docker.sock ne doit pas avoir de permissions trop larges (ex: 777) pour empêcher l\'élévation de privilèges.'
+        ]);
+
+        await client.query(`
+            INSERT INTO vulnerabilities (name, category, check_fn, max_score, coefficient, description)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            ON CONFLICT (name) DO UPDATE 
+            SET category = EXCLUDED.category,
+                check_fn = EXCLUDED.check_fn,
+                max_score = EXCLUDED.max_score,
+                coefficient = EXCLUDED.coefficient,
+                description = EXCLUDED.description
+        `, [
+            'cleartext_cron',
+            'secrets_management',
+            'check_cleartext_cron',
+            100,
+            2.0,
+            'Les identifiants en clair dans les scripts cron (/etc/cron.d/backup) doivent être supprimés ou sécurisés.'
+        ]);
+
+        await client.query(`
+            INSERT INTO vulnerabilities (name, category, check_fn, max_score, coefficient, description)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            ON CONFLICT (name) DO UPDATE 
+            SET category = EXCLUDED.category,
+                check_fn = EXCLUDED.check_fn,
+                max_score = EXCLUDED.max_score,
+                coefficient = EXCLUDED.coefficient,
+                description = EXCLUDED.description
+        `, [
+            'apparmor_disabled',
+            'defense_in_depth',
+            'check_apparmor',
+            100,
+            2.0,
+            'Le profil AppArmor (/etc/apparmor.d/custom-profile) doit être activé en mode enforce au lieu de complain.'
+        ]);
+
+        await client.query(`
+            INSERT INTO vulnerabilities (name, category, check_fn, max_score, coefficient, description)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            ON CONFLICT (name) DO UPDATE 
+            SET category = EXCLUDED.category,
+                check_fn = EXCLUDED.check_fn,
+                max_score = EXCLUDED.max_score,
+                coefficient = EXCLUDED.coefficient,
+                description = EXCLUDED.description
+        `, [
+            'obsolete_package',
+            'dependency_management',
+            'check_obsolete_package',
+            100,
+            2.0,
+            'Le binaire obsolète et vulnérable (/usr/local/bin/bash-legacy) doit être supprimé.'
+        ]);
+
         console.log('Vulnérabilités de la Semaine 2 insérées/mises à jour.\n');
         console.log('Done.');
     } finally {

@@ -32,5 +32,21 @@ RUN sed -i 's/bind 127.0.0.1 -::1/bind 0.0.0.0/' /etc/redis/redis.conf && \
 # Bit SUID abusif sur /usr/bin/find
 RUN chmod u+s /usr/bin/find
 
+# ÉLEVÉE #V4 : Socket Docker exposé (permissions larges)
+RUN touch /var/run/docker.sock && chmod 777 /var/run/docker.sock
+
+# ÉLEVÉE #V5 : Credentials en clair dans un script cron
+RUN mkdir -p /etc/cron.d && \
+    echo "DB_PASSWORD=supersecret" > /etc/cron.d/backup && \
+    chmod 644 /etc/cron.d/backup
+
+# ÉLEVÉE #V6 : AppArmor désactivé (mode complain simulé via un fichier de configuration)
+RUN mkdir -p /etc/apparmor.d && \
+    echo "profile custom-profile flags=(complain) { }" > /etc/apparmor.d/custom-profile
+
+# ÉLEVÉE #V7 : Paquet obsolète (simulé via un binaire bash-legacy vulnérable fictif)
+RUN touch /usr/local/bin/bash-legacy && chmod +x /usr/local/bin/bash-legacy
+
 EXPOSE 22 111 6379
 CMD ["/bin/sh", "-c", "rpcbind && service redis-server start && mkdir -p /var/run/sshd && /usr/sbin/sshd && tail -f /dev/null"]
+

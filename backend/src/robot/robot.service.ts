@@ -4,12 +4,20 @@ import { check_ssh_password } from './checks/check_ssh_password';
 import { check_unused_ports } from './checks/check_unused_ports';
 import { check_suid_find } from './checks/check_suid_find';
 import { check_redis_exposed } from './checks/check_redis_exposed';
+import { check_docker_sock } from './checks/check_docker_sock';
+import { check_cleartext_cron } from './checks/check_cleartext_cron';
+import { check_apparmor } from './checks/check_apparmor';
+import { check_obsolete_package } from './checks/check_obsolete_package';
 
 const CHECK_REGISTRY: Record<string, (ip: string) => Promise<boolean>> = {
   check_ssh_password,
   check_unused_ports,
   check_suid_find,
   check_redis_exposed,
+  check_docker_sock,
+  check_cleartext_cron,
+  check_apparmor,
+  check_obsolete_package,
 };
 
 const ROBOT_INTERVAL_MS = 30_000;

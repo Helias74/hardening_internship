@@ -159,6 +159,78 @@ async function seed() {
             'Le binaire obsolète et vulnérable (/usr/local/bin/bash-legacy) doit être supprimé.'
         ]);
 
+        await client.query(`
+            INSERT INTO vulnerabilities (name, category, check_fn, max_score, coefficient, description)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            ON CONFLICT (name) DO UPDATE 
+            SET category = EXCLUDED.category,
+                check_fn = EXCLUDED.check_fn,
+                max_score = EXCLUDED.max_score,
+                coefficient = EXCLUDED.coefficient,
+                description = EXCLUDED.description
+        `, [
+            'ip_forwarding_enabled',
+            'network',
+            'check_ip_forwarding',
+            100,
+            2.0,
+            'Le routage IP (IP forwarding) doit être désactivé dans le fichier /etc/sysctl.conf (net.ipv4.ip_forward=0).'
+        ]);
+
+        await client.query(`
+            INSERT INTO vulnerabilities (name, category, check_fn, max_score, coefficient, description)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            ON CONFLICT (name) DO UPDATE 
+            SET category = EXCLUDED.category,
+                check_fn = EXCLUDED.check_fn,
+                max_score = EXCLUDED.max_score,
+                coefficient = EXCLUDED.coefficient,
+                description = EXCLUDED.description
+        `, [
+            'shadow_weak_permissions',
+            'system',
+            'check_shadow_perms',
+            100,
+            2.0,
+            'Le fichier /etc/shadow ne doit pas être lisible par tout le monde (permissions recommandées: 640 ou 600).'
+        ]);
+
+        await client.query(`
+            INSERT INTO vulnerabilities (name, category, check_fn, max_score, coefficient, description)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            ON CONFLICT (name) DO UPDATE 
+            SET category = EXCLUDED.category,
+                check_fn = EXCLUDED.check_fn,
+                max_score = EXCLUDED.max_score,
+                coefficient = EXCLUDED.coefficient,
+                description = EXCLUDED.description
+        `, [
+            'dangerous_sudoers_apt',
+            'system',
+            'check_sudoers_apt',
+            100,
+            2.0,
+            'L\'utilisateur student ne doit pas être autorisé à exécuter apt avec sudo sans mot de passe.'
+        ]);
+
+        await client.query(`
+            INSERT INTO vulnerabilities (name, category, check_fn, max_score, coefficient, description)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            ON CONFLICT (name) DO UPDATE 
+            SET category = EXCLUDED.category,
+                check_fn = EXCLUDED.check_fn,
+                max_score = EXCLUDED.max_score,
+                coefficient = EXCLUDED.coefficient,
+                description = EXCLUDED.description
+        `, [
+            'verbose_ssh_banner',
+            'information_disclosure',
+            'check_ssh_banner',
+            100,
+            2.0,
+            'La bannière SSH doit être configurée pour ne pas divulguer d\'informations de version de l\'OS (DebianBanner no).'
+        ]);
+
         console.log('Vulnérabilités de la Semaine 2 insérées/mises à jour.\n');
         console.log('Done.');
     } finally {

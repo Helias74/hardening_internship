@@ -8,6 +8,10 @@ import { check_docker_sock } from './checks/check_docker_sock';
 import { check_cleartext_cron } from './checks/check_cleartext_cron';
 import { check_apparmor } from './checks/check_apparmor';
 import { check_obsolete_package } from './checks/check_obsolete_package';
+import { check_ip_forwarding } from './checks/check_ip_forwarding';
+import { check_shadow_perms } from './checks/check_shadow_perms';
+import { check_sudoers_apt } from './checks/check_sudoers_apt';
+import { check_ssh_banner } from './checks/check_ssh_banner';
 
 const CHECK_REGISTRY: Record<string, (ip: string) => Promise<boolean>> = {
   check_ssh_password,
@@ -18,6 +22,10 @@ const CHECK_REGISTRY: Record<string, (ip: string) => Promise<boolean>> = {
   check_cleartext_cron,
   check_apparmor,
   check_obsolete_package,
+  check_ip_forwarding,
+  check_shadow_perms,
+  check_sudoers_apt,
+  check_ssh_banner,
 };
 
 const ROBOT_INTERVAL_MS = 30_000;

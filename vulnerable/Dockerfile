@@ -4,6 +4,7 @@ RUN apt-get update && apt-get install -y \
     openssh-server \
     rpcbind \
     redis-server \
+    sudo \
     && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /var/run/sshd
@@ -47,6 +48,17 @@ RUN mkdir -p /etc/apparmor.d && \
 # ÉLEVÉE #V7 : Paquet obsolète (simulé via un binaire bash-legacy vulnérable fictif)
 RUN touch /usr/local/bin/bash-legacy && chmod +x /usr/local/bin/bash-legacy
 
+# MOYENNE #V11 : Règle Sudoers dangereuse
+RUN echo "student ALL=(ALL) NOPASSWD: /usr/bin/apt" > /etc/sudoers.d/student && \
+    chmod 0440 /etc/sudoers.d/student
+
+# MOYENNE #V10 : Permissions faibles sur /etc/shadow
+RUN chmod 644 /etc/shadow
+
+# MOYENNE #V9 : Configuration Sysctl permissive (IP Forwarding)
+RUN echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
+
 EXPOSE 22 111 6379
 CMD ["/bin/sh", "-c", "rpcbind && service redis-server start && mkdir -p /var/run/sshd && /usr/sbin/sshd && tail -f /dev/null"]
+
 

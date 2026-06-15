@@ -18,6 +18,7 @@
       <h1>Dashboard Étudiant</h1>
       <p>Bonjour <strong>{{ student.username }}</strong> ({{ student.etu_id }})</p>
       <p>Email : {{ student.email }}</p>
+      <p>Ip attribué : {{ student.container_ip }}</p>
 
       <!-- Scoring -->
       <div v-if="scoring">
